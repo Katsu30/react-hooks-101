@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const App = (props) => {
   // 状態の初期化
@@ -6,6 +6,25 @@ const App = (props) => {
   const [state, setState] = useState(props);
   // 分割代入をして、リファクタリングしても良い
   const { name, price } = state;
+
+  // componentDidMountedやcomponentDidUpdateの挙動を示す
+  useEffect(() => {
+    console.log('This is like componentDidMounted or componentDidUpdate.');
+  })
+  // 第二引数に空の配列を代入すると、componentDidMountedの挙動になる
+  useEffect(() => {
+    console.log('This is like componentDidMounted.');
+  }, [])
+  // 第二引数に該当のstateを代入すると、componentDidUpdateの挙動になる
+  useEffect(() => {
+    console.log('This callback is for name only.');
+  }, [name])
+
+  // 通常のレンダリングは上記のuseEffectよりも先に実行される
+  // const renderPeriod = () => {
+  //   console.log('renderPeriod renders period .')
+  //   return '.';
+  // }
 
   return (
       <div>
