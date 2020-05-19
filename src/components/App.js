@@ -1,32 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useReducer } from 'react';
 // bootstrapのインストールは下記
 import 'bootstrap/dist/css/bootstrap.min.css';
+import reducer from '../reducers'
+import Event from '../components/Event';
 
 const App = (props) => {
-  // 状態の初期化
-  // 下記のように、オブジェクトをuseStateの引数に渡すこともできる
-  const [state, setState] = useState(props);
-  // 分割代入をして、リファクタリングしても良い
-  const { name, price } = state;
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  // 処理を実行したいタイミングでdispatchを呼ぶ
+  const [state, dispatch] = useReducer(reducer, []);
 
-  // componentDidMountedやcomponentDidUpdateの挙動を示す
-  useEffect(() => {
-    console.log('This is like componentDidMounted or componentDidUpdate.');
-  })
-  // 第二引数に空の配列を代入すると、componentDidMountedの挙動になる
-  useEffect(() => {
-    console.log('This is like componentDidMounted.');
-  }, [])
-  // 第二引数に該当のstateを代入すると、componentDidUpdateの挙動になる
-  useEffect(() => {
-    console.log('This callback is for name only.');
-  }, [name])
+  const addEvent = (e) => {
+    e.preventDefault();
 
-  // 通常のレンダリングは上記のuseEffectよりも先に実行される
-  // const renderPeriod = () => {
-  //   console.log('renderPeriod renders period .')
-  //   return '.';
-  // }
+    // dispatchをここで呼ぶ
+    dispatch({
+      type: 'CREATE_EVENT',
+      title,
+      body
+    })
+
+    // テキストボックスの初期化
+    setTitle('');
+    setBody('');
+  }
+
+  const deleteAllEvents = (e) => {
+    e.preventDefault();
+    const result = window.confirm('すべてのイベントを本当に削除しても良いですか？');
+    if (result) {
+      dispatch({
+        type: 'DELETE_ALL_EVENTS',
+      });
+    }
+  }
+
+  const unCreatable = title === '' || body === '';
+
 
   return (
       <div className="container-fluid">
@@ -35,14 +45,14 @@ const App = (props) => {
         <form>
           <div className='form-group'>
             <label htmlFor="formEventTitle">タイトル</label>
-            <input className="form-control" id="formEventTitle" />
+            <input className="form-control" id="formEventTitle" value={title} onChange={(e) => {setTitle(e.target.value)}}/>
           </div>
           <div className='form-group'>
-            <label htmlFor="formEventBody">タイトル</label>
-            <textarea className="form-control" id="formEventBody" />
+            <label htmlFor="formEventBody">内容</label>
+            <textarea className="form-control" id="formEventBody" value={body} onChange={(e) => {setBody(e.target.value)}}/>
           </div>
-          <button className="btn btn-primary">イベントを作成する</button>
-          <button className="btn btn-danger">すべてのイベントを削除する</button>
+          <button className="btn btn-primary"　onClick={addEvent} disabled={unCreatable}>イベントを作成する</button>
+          <button className="btn btn-danger" onClick={deleteAllEvents} disabled={state.length === 0}>すべてのイベントを削除する</button>
         </form>
 
         <h4>イベント一覧</h4>
@@ -56,25 +66,11 @@ const App = (props) => {
             </tr>
           </thead>
           <tbody>
-
+            { state.map((event, index) => (<Event key={index} event={event} dispatch={dispatch} />))}
           </tbody>
         </table>
-        <p>現在の{name}は、{price}円です</p>
-        {/* stateを展開してから、該当の値を更新する */}
-        <button onClick={() => setState({...state, price: price + 1})}>+1</button>
-        <button onClick={() => setState({...state, price: price - 1})}>-1</button>
-        <button onClick={() => setState(props)}>Reset</button>
-        {/* inputでも同じ */}
-        <input value={name} onChange={e => setState({...state, name: e.target.value})}/>
       </div>
     );
 }
-
-// propsを利用する方法もある
-App.defaultProps =  {
-  name: '',
-  price: 1000
-}
-
 
 export default App;
