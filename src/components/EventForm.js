@@ -8,7 +8,6 @@ import {
 } from '../actions';
 import AppContext from '../contexts/AppContext';
 import { timeCurrentIso8601 } from '../utils';
-import operationLogs from '../reducers/operationLogs';
 
 const EventForm = () => {
   // propsからuseContextを使用しての受け取りにリファクタリング
