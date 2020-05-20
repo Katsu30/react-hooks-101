@@ -1,4 +1,5 @@
 import React from 'react';
+import { DELETE_EVENT } from '../actions';
 
 // コンポーネントを作成したら、dispatchも同様に引っ張ってくる
 const Event = ({ event, dispatch }) => {
@@ -6,7 +7,7 @@ const Event = ({ event, dispatch }) => {
     const handleClickDeleteButton = () => {
       const result = window.confirm(`イベント(${id})を本当に削除しても良いですか？`);
       if(result){
-        dispatch({ type: 'DELETE_EVENT', id});
+        dispatch({ type: DELETE_EVENT, id});
       }
     }
 
