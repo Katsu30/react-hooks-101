@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Event from '../components/Event';
+import AppContext from '../contexts/AppContext';
 
 // stateとreducerを共通にするために、propsで取得する
-const Events = ({state, dispatch}) => {
+const Events = () => {
+
+  // useContextを使用することで、propsを使用しないでもデータの受け渡しが可能になる
+  // 中継ぎのコンポーネントの記述量が減るため、useContextの使用効果は高い
+  const { state } = useContext(AppContext);
   return (
     <>
       <h4>イベント一覧</h4>
@@ -16,7 +21,7 @@ const Events = ({state, dispatch}) => {
           </tr>
         </thead>
         <tbody>
-          { state.map((event, index) => (<Event key={index} event={event} dispatch={dispatch} />))}
+          { state.map((event, index) => (<Event key={index} event={event} />))}
         </tbody>
       </table>
     </>
